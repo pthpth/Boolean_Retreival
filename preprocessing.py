@@ -39,12 +39,17 @@ def editDistance(str1, str2):
 
 
 def findRightWord(word):
-    with open('unique-word') as jsonFile:
-        kGramList = json.load(jsonFile)
+    min = 127
     if uniquewords.isUniqueWord(word):
-
-    else:
         return word
+    else:
+        for wd in uniquewords.uniqueWords:
+            if (abs(len(wd)-len(word))>min):
+                continue
+            else:
+                min = editDistance(wd,word)
+                w = wd
+        return w
 
 
 
