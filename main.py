@@ -9,7 +9,7 @@ def addWord(word, docID):
     """
     Function to take a word and docID and add it to the existing inverted index list in inverted-index.json
 
-    Attributes
+    Parameters
     ----------
     word : string
         the word to be added
@@ -94,6 +94,18 @@ def removeStopWords(word):
 
 
 def combineInvIndxAND(arr1, arr2):
+    """
+    Function to combine the 2 inverted index list with AND operator
+
+    Paramters
+    ----------
+    arr1: LinkedList
+    arr2: LinkedList
+    Returns
+    --------
+    ans : LinkedList
+        The resulting inverted index list
+    """
     ans = LinkedList()
     while arr1 is not None and arr2 is not None:
         if arr1.data == arr2.data:
@@ -103,6 +115,61 @@ def combineInvIndxAND(arr1, arr2):
         elif arr1.data > arr2.data:
             arr2 = arr2.next
         else:
+            arr1 = arr1.next
+    return ans
+
+
+def combineInvIndxOR(arr1, arr2):
+    """
+        Function to combine the 2 inverted index list with OR operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        """
+    ans = LinkedList()
+    while arr1 is not None and arr2 is not None:
+        if arr1.data > arr2.data:
+            ans.insert(arr2.data)
+            arr2 = arr2.next
+        elif arr1.data < arr2.data:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+        else:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+            arr2 = arr2.next
+    return ans
+
+
+def combineInvIndxNOT(arr1, arr2):
+    """
+        Function to combine the 2 inverted index list with NOT operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        """
+    ans = LinkedList()
+    while arr1 is not None and arr2 is not None:
+        if arr1.data == arr2.data:
+            arr1 = arr1.next
+            arr2 = arr2.next
+        elif arr1.data > arr2.data:
+            ans.insert(arr2.data)
+            arr2 = arr2.next
+        else:
+            ans.insert(arr1.data)
             arr1 = arr1.next
     return ans
 
@@ -122,9 +189,9 @@ def invIndxSort(query):
     return query
 
 
-def make_kGrams(query):
+def retKGrams(query):
     ans = LinkedList()
-    ansList=[]
+    ansList = []
     with open('k-gram.json') as jsonFile:
         kGramList = json.load(jsonFile)  # loading data
     word = "$" + query + "$"

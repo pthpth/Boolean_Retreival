@@ -1,4 +1,16 @@
 class Node:
+    """
+    class to store inverted index data
+
+    Attributes
+    ----------
+    data : Any
+        The data which is suppoused to be stored in the list
+        int in inverted index list of docID
+        string in inverted index of k-grams
+    nextN : Node
+        Reference to the next node in the list
+    """
     def __init__(self, data, nextN=None):
         self.next = nextN
         self.data = data

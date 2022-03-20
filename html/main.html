@@ -37,7 +37,7 @@ def addWord(word, docID):
     &#34;&#34;&#34;
     Function to take a word and docID and add it to the existing inverted index list in inverted-index.json
 
-    Attributes
+    Parameters
     ----------
     word : string
         the word to be added
@@ -122,6 +122,18 @@ def removeStopWords(word):
 
 
 def combineInvIndxAND(arr1, arr2):
+    &#34;&#34;&#34;
+    Function to combine the 2 inverted index list with AND operator
+
+    Paramters
+    ----------
+    arr1: LinkedList
+    arr2: LinkedList
+    Returns
+    --------
+    ans : LinkedList
+        The resulting inverted index list
+    &#34;&#34;&#34;
     ans = LinkedList()
     while arr1 is not None and arr2 is not None:
         if arr1.data == arr2.data:
@@ -131,6 +143,61 @@ def combineInvIndxAND(arr1, arr2):
         elif arr1.data &gt; arr2.data:
             arr2 = arr2.next
         else:
+            arr1 = arr1.next
+    return ans
+
+
+def combineInvIndxOR(arr1, arr2):
+    &#34;&#34;&#34;
+        Function to combine the 2 inverted index list with OR operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        &#34;&#34;&#34;
+    ans = LinkedList()
+    while arr1 is not None and arr2 is not None:
+        if arr1.data &gt; arr2.data:
+            ans.insert(arr2.data)
+            arr2 = arr2.next
+        elif arr1.data &lt; arr2.data:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+        else:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+            arr2 = arr2.next
+    return ans
+
+
+def combineInvIndxNOT(arr1, arr2):
+    &#34;&#34;&#34;
+        Function to combine the 2 inverted index list with NOT operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        &#34;&#34;&#34;
+    ans = LinkedList()
+    while arr1 is not None and arr2 is not None:
+        if arr1.data == arr2.data:
+            arr1 = arr1.next
+            arr2 = arr2.next
+        elif arr1.data &gt; arr2.data:
+            ans.insert(arr2.data)
+            arr2 = arr2.next
+        else:
+            ans.insert(arr1.data)
             arr1 = arr1.next
     return ans
 
@@ -150,9 +217,9 @@ def invIndxSort(query):
     return query
 
 
-def make_kGrams(query):
+def retKGrams(query):
     ans = LinkedList()
-    ansList=[]
+    ansList = []
     with open(&#39;k-gram.json&#39;) as jsonFile:
         kGramList = json.load(jsonFile)  # loading data
     word = &#34;$&#34; + query + &#34;$&#34;
@@ -174,7 +241,7 @@ def make_kGrams(query):
 </code></dt>
 <dd>
 <div class="desc"><p>Function to take a word and docID and add it to the existing inverted index list in inverted-index.json</p>
-<h2 id="attributes">Attributes</h2>
+<h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>word</code></strong> :&ensp;<code>string</code></dt>
 <dd>the word to be added</dd>
@@ -189,7 +256,7 @@ def make_kGrams(query):
     &#34;&#34;&#34;
     Function to take a word and docID and add it to the existing inverted index list in inverted-index.json
 
-    Attributes
+    Parameters
     ----------
     word : string
         the word to be added
@@ -262,12 +329,33 @@ Parameters</p>
 <span>def <span class="ident">combineInvIndxAND</span></span>(<span>arr1, arr2)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Function to combine the 2 inverted index list with AND operator</p>
+<h2 id="paramters">Paramters</h2>
+<p>arr1: LinkedList
+arr2: LinkedList
+Returns</p>
+<hr>
+<dl>
+<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>The resulting inverted index list</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def combineInvIndxAND(arr1, arr2):
+    &#34;&#34;&#34;
+    Function to combine the 2 inverted index list with AND operator
+
+    Paramters
+    ----------
+    arr1: LinkedList
+    arr2: LinkedList
+    Returns
+    --------
+    ans : LinkedList
+        The resulting inverted index list
+    &#34;&#34;&#34;
     ans = LinkedList()
     while arr1 is not None and arr2 is not None:
         if arr1.data == arr2.data:
@@ -278,6 +366,103 @@ Parameters</p>
             arr2 = arr2.next
         else:
             arr1 = arr1.next
+    return ans</code></pre>
+</details>
+</dd>
+<dt id="main.combineInvIndxNOT"><code class="name flex">
+<span>def <span class="ident">combineInvIndxNOT</span></span>(<span>arr1, arr2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to combine the 2 inverted index list with NOT operator</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arr1</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>arr2</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>The resulting inverted index list</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combineInvIndxNOT(arr1, arr2):
+    &#34;&#34;&#34;
+        Function to combine the 2 inverted index list with NOT operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        &#34;&#34;&#34;
+    ans = LinkedList()
+    while arr1 is not None and arr2 is not None:
+        if arr1.data == arr2.data:
+            arr1 = arr1.next
+            arr2 = arr2.next
+        elif arr1.data &gt; arr2.data:
+            ans.insert(arr2.data)
+            arr2 = arr2.next
+        else:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+    return ans</code></pre>
+</details>
+</dd>
+<dt id="main.combineInvIndxOR"><code class="name flex">
+<span>def <span class="ident">combineInvIndxOR</span></span>(<span>arr1, arr2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to combine the 2 inverted index list with OR operator</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arr1</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>arr2</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList</code></dt>
+<dd>The resulting inverted index list</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combineInvIndxOR(arr1, arr2):
+    &#34;&#34;&#34;
+        Function to combine the 2 inverted index list with OR operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        &#34;&#34;&#34;
+    ans = LinkedList()
+    while arr1 is not None and arr2 is not None:
+        if arr1.data &gt; arr2.data:
+            ans.insert(arr2.data)
+            arr2 = arr2.next
+        elif arr1.data &lt; arr2.data:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+        else:
+            ans.insert(arr1.data)
+            arr1 = arr1.next
+            arr2 = arr2.next
     return ans</code></pre>
 </details>
 </dd>
@@ -312,27 +497,6 @@ Parameters</p>
 <pre><code class="python">def invIndxSort(query):
     query.sort(lambda x: x.len)
     return query</code></pre>
-</details>
-</dd>
-<dt id="main.make_kGrams"><code class="name flex">
-<span>def <span class="ident">make_kGrams</span></span>(<span>query)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def make_kGrams(query):
-    ans = LinkedList()
-    ansList=[]
-    with open(&#39;k-gram.json&#39;) as jsonFile:
-        kGramList = json.load(jsonFile)  # loading data
-    word = &#34;$&#34; + query + &#34;$&#34;
-    for i in range(len(query)):
-        kGram = query[i:i + 3]
-        ansList.append(kGramList[kGram])
-    ansList = invIndxCombiner(ansList)</code></pre>
 </details>
 </dd>
 <dt id="main.removeStopWords"><code class="name flex">
@@ -372,6 +536,27 @@ Parameters</p>
             return False
         else:
             return True</code></pre>
+</details>
+</dd>
+<dt id="main.retKGrams"><code class="name flex">
+<span>def <span class="ident">retKGrams</span></span>(<span>query)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def retKGrams(query):
+    ans = LinkedList()
+    ansList = []
+    with open(&#39;k-gram.json&#39;) as jsonFile:
+        kGramList = json.load(jsonFile)  # loading data
+    word = &#34;$&#34; + query + &#34;$&#34;
+    for i in range(len(query)):
+        kGram = query[i:i + 3]
+        ansList.append(kGramList[kGram])
+    ansList = invIndxCombiner(ansList)</code></pre>
 </details>
 </dd>
 <dt id="main.stemmer"><code class="name flex">
@@ -424,10 +609,12 @@ Parameters</p>
 <li><code><a title="main.addWord" href="#main.addWord">addWord</a></code></li>
 <li><code><a title="main.binarySearch" href="#main.binarySearch">binarySearch</a></code></li>
 <li><code><a title="main.combineInvIndxAND" href="#main.combineInvIndxAND">combineInvIndxAND</a></code></li>
+<li><code><a title="main.combineInvIndxNOT" href="#main.combineInvIndxNOT">combineInvIndxNOT</a></code></li>
+<li><code><a title="main.combineInvIndxOR" href="#main.combineInvIndxOR">combineInvIndxOR</a></code></li>
 <li><code><a title="main.invIndxCombiner" href="#main.invIndxCombiner">invIndxCombiner</a></code></li>
 <li><code><a title="main.invIndxSort" href="#main.invIndxSort">invIndxSort</a></code></li>
-<li><code><a title="main.make_kGrams" href="#main.make_kGrams">make_kGrams</a></code></li>
 <li><code><a title="main.removeStopWords" href="#main.removeStopWords">removeStopWords</a></code></li>
+<li><code><a title="main.retKGrams" href="#main.retKGrams">retKGrams</a></code></li>
 <li><code><a title="main.stemmer" href="#main.stemmer">stemmer</a></code></li>
 </ul>
 </li>
