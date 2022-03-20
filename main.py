@@ -135,3 +135,11 @@ def retKGrams(query):
         kGram = query[i:i + 3]
         ansList.append(kGrams[kGram])
     ansList = invIndxCombiner(ansList)
+
+def __main__():
+    query = input("Search:")
+    #Process query terms and check for spelling mistakes
+    #Keep track of operations between the query terms 
+    #Retrieve the Linked list for the query terms
+    #Merge the linked lists based on query operations
+    #Return the names of the docs with docId
