@@ -36,7 +36,7 @@ class KGrams:
 class StopWords:
     def __init__(self):
         self.stopWord = []
-        file = open("stop_words.txt")
+        file = open("lists/stop_words.txt")
         for x in file:
             self.stopWord.append(x.strip())
 
@@ -47,7 +47,7 @@ class StopWords:
 class UniqueWords:
     def __init__(self):
         self.uniqueWords = []
-        file = open("unique_words.txt")
+        file = open("lists/unique_words.txt")
         for x in file:
             self.uniqueWords.append(x.strip())
         self.uniqueWords.sort()

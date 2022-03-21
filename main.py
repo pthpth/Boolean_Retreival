@@ -1,6 +1,6 @@
 import json
 from helper import binarySearch
-from nltk.stem import PorterStemmer
+
 from invertedIndx import InvertedIndex, StopWords, KGrams
 from LinkedList import LinkedList
 
@@ -9,20 +9,7 @@ stopWords = StopWords()
 kGrams = KGrams()
 
 
-def stemmer(query):
-    """
-    Parameters
-    ---------
-    query: string
-        the word of which the stem word is to be found
 
-    Returns
-    ---------
-    ans : string
-        the stem word of the query
-    """
-    ps = PorterStemmer()
-    return ps.stem(query)
 
 
 def combineInvIndxAND(arr1, arr2):
@@ -117,7 +104,7 @@ def invIndxCombiner(ansList):
         ansList = invIndxSort(ansList)
         ans = combineInvIndxAND(ansList[0], ansList[1])
         del ansList[0]
-        del ansList[1]
+        del ansList[0]
         ansList.append(ans)
     return ansList[0]
 
@@ -136,10 +123,11 @@ def retKGrams(query):
         ansList.append(kGrams[kGram])
     ansList = invIndxCombiner(ansList)
 
+
 def __main__():
     query = input("Search:")
-    #Process query terms and check for spelling mistakes
-    #Keep track of operations between the query terms 
-    #Retrieve the Linked list for the query terms
-    #Merge the linked lists based on query operations
-    #Return the names of the docs with docId
+    # Process query terms and check for spelling mistakes
+    # Keep track of operations between the query terms
+    # Retrieve the Linked list for the query terms
+    # Merge the linked lists based on query operations
+    # Return the names of the docs with docId

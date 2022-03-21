@@ -6,7 +6,9 @@ import json
 from main import binarySearch
 from invertedIndx import UniqueWords
 
-uniquewords=UniqueWords()
+uniquewords = UniqueWords()
+
+
 def editDistance(str1, str2):
     """
     Function to take two strings and return the levenshtein edit distance
@@ -23,7 +25,7 @@ def editDistance(str1, str2):
         the edit distance between the two strings
     """
     # Converting str1 to str2
-    #Initiating the matrix with correct dimensions along with the first row and column
+    # Initiating the matrix with correct dimensions along with the first row and column
     mat = np.zeros((len(str1) + 1, len(str2) + 1))
     for i in range(0, len(str1) + 1):
         mat[i][0] = i
@@ -47,13 +49,12 @@ def findRightWord(word):
         return word
     else:
         for wd in uniquewords.uniqueWords:
-            if (abs(len(wd)-len(word))>min):
+            if abs(len(wd) - len(word)) > min:
                 continue
             else:
-                min = editDistance(wd,word)
+                min = editDistance(wd, word)
                 w = wd
         return w
-
 
 
 def booleanRet(query):
@@ -61,4 +62,3 @@ def booleanRet(query):
     ans = LinkedList()
     for x in tokens:
         temp = findRightWord(x)
-
