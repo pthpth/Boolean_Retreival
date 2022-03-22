@@ -1,4 +1,5 @@
 import json
+import sys
 from sqlite3 import Cursor
 from tkinter.messagebox import NO
 from webbrowser import get
@@ -7,6 +8,7 @@ from numpy import cumprod
 from LinkedList import LinkedList
 from helper import binarySearch, combineInvIndxAND
 
+sys.tracebacklimit = -1
 
 class InvertedIndex:
     def __init__(self):
@@ -35,13 +37,16 @@ class KGrams:
             self.kGrams[x] = temp
 
     def getKGrams(self, word):
-
-        return self.kGrams[word]
+        try: 
+            return self.kGrams[word]
+        except:
+            print("BAD WILDCARD")
+            raise KeyError
+           
 
     def wildCardSearch(self,word):
         ansList = LinkedList()
         if word[0]=='*':
-            print("star in begin")
             word = word[1:] + '$'
             for i in range(0, len(word)-2):
                 if len(word)==3:
@@ -51,7 +56,6 @@ class KGrams:
                 else:
                     ansList = combineInvIndxAND(ansList,self.getKGrams(word[i:i+3]))
         elif word[-1]=='*':
-            print("star in end")
             word = '$' + word[0:-1]
             for i in range(0, len(word)-2):
                 if len(word)==3:
@@ -81,7 +85,7 @@ class KGrams:
             ansList = combineInvIndxAND(tl1, tl2)
         return ansList
 
-
+ 
 class StopWords:
     def __init__(self):
         self.stopWord = []

@@ -3,7 +3,7 @@ import numpy as np
 from nltk.tokenize import word_tokenize
 from LinkedList import LinkedList
 import json
-from main import binarySearch
+from helper import binarySearch
 from invertedIndx import UniqueWords
 
 uniquewords = UniqueWords()
@@ -54,11 +54,83 @@ def findRightWord(word):
             elif editDistance(wd,word)<min:
                 min = editDistance(wd, word)
                 w = wd
+        print("Did you mean", w.title(), "?")
         return w
 
+class Conversion:
+    def __init__(self, capacity):
+        self.top = -1
+        self.capacity = capacity
+        self.array = []
+        self.output = []
+        self.precedence = {'and': 2, 'or': 1, 'not': 3}
+ 
+    def isEmpty(self):
+        return True if self.top == -1 else False
+ 
+    def peek(self):
+        return self.array[-1]
+ 
+    def pop(self):
+        if not self.isEmpty():
+            self.top -= 1
+            return self.array.pop()
+        else:
+            return "$"
+ 
+    def push(self, op):
+        self.top += 1
+        self.array.append(op)
+ 
+    def isOperand(self, ch):
+        return not(ch=="and" or ch=="or" or ch=="not" or ch=="(" or ch==")")
+ 
+    def notGreater(self, i):
+        try:
+            a = self.precedence[i]
+            b = self.precedence[self.peek()]
+            return True if a <= b else False
+        except KeyError:
+            return False
+ 
+    def infixToPostfix(self, exp):
+        temp=exp
+        exp=""
+        for j in range(len(temp)):
+            if temp[j]=="(" :
+                exp=exp+"("+" "
+            elif temp[j]==")":
+                exp=exp+" "+")"
+            else:
+                exp=exp+temp[j]
+        for i in exp.split():
+            if self.isOperand(i):
+                self.output.append(i)
+ 
+            elif i == '(':
+                self.push(i)
+ 
+            elif i == ')':
+                while((not self.isEmpty()) and
+                      self.peek() != '('):
+                    a = self.pop()
+                    self.output.append(a)
+                if (not self.isEmpty() and self.peek() != '('):
+                    return -1
+                else:
+                    self.pop()
+ 
+            else:
+                while(not self.isEmpty() and self.notGreater(i)):
+                    self.output.append(self.pop())
+                self.push(i)
+ 
+        while not self.isEmpty():
+            self.output.append(self.pop())
+ 
+        return self.output
+ 
+ 
 
 def booleanRet(query):
-    tokens = word_tokenize(query)
-    ans = LinkedList()
-    for x in tokens:
-        temp = findRightWord(x)
+    word=query.split()

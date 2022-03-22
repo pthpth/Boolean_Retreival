@@ -1,6 +1,3 @@
-import imp
-
-
 from LinkedList import LinkedList
 
 def binarySearch(arr, query):
@@ -30,6 +27,24 @@ def binarySearch(arr, query):
             else:
                 high = mid - 1
     return -1
+def combineInvIndxNOT(arr1,maxInd):
+    ans=LinkedList()
+    cursor1=arr1.head
+    i=0
+    while cursor1!=None and i!=maxInd:
+        if cursor1.data==i:
+            cursor1=cursor1.next
+            i=i+1
+        elif cursor1.data>i:
+            ans.insert(i)
+            i=i+1
+        else:
+            cursor1=cursor1.next
+    while i<maxInd:
+        ans.insert(i)
+        i=i+1
+    return ans
+
 
 def combineInvIndxAND(arr1, arr2):
     """
@@ -86,4 +101,10 @@ def combineInvIndxOR(arr1, arr2):
         else:
             ans.insert(cursor1.data)
             cursor1 = cursor1.next
+    while cursor1!=None:
+        ans.insert(cursor1.data)
+        cursor1=cursor1.next
+    while cursor2!=None:
+        ans.insert(cursor2.data)
+        cursor2=cursor2.next
     return ans

@@ -1,49 +1,18 @@
 import json
-import re
-from helper import binarySearch
-
+from helper import combineInvIndxNOT, combineInvIndxOR
+from nltk.stem import PorterStemmer
 from invertedIndx import InvertedIndex, StopWords, KGrams
 from LinkedList import LinkedList
 from helper import combineInvIndxAND
-
+from preprocessing import Conversion,findRightWord
 invertedInd = InvertedIndex()
 stopWords = StopWords()
 kGrams = KGrams()
 
-
-def combineInvIndxNOT(arr1, arr2):
-    """
-        Function to combine the 2 inverted index list with NOT operator
-
-        Parameters
-        ----------
-        arr1: LinkedList
-        arr2: LinkedList
-        Returns
-        --------
-        ans : LinkedList
-            The resulting inverted index list
-        """
-    ans = LinkedList()
-    arr1.cursor = arr1.head
-    arr2.cursor = arr2.cursor
-    while arr1.cursor is not None and arr2.cursor is not None:
-        if arr1.cursor.data == arr2.cursor.data:
-            arr1 = arr1.cursor.next
-            arr2 = arr2.cursor.next
-        elif arr1.data > arr2.data:
-            ans.insert(arr2.cursor.data)
-            arr2 = arr2.cursor.next
-        else:
-            ans.insert(arr1.cursor.data)
-            arr1 = arr1.cursor.next
-    return ans
-
-
 def invIndxCombiner(ansList):
     while len(ansList) > 1:
         ansList = invIndxSort(ansList)
-        ans = combineInvIndxAND(ansList[0], ansList[1])
+        ans = combineInvIndxOR(ansList[0], ansList[1])
         del ansList[0]
         del ansList[0]
         ansList.append(ans)
@@ -51,7 +20,7 @@ def invIndxCombiner(ansList):
 
 
 def invIndxSort(query):
-    query.sort(lambda x: x.len)
+    query=sorted(query,key=lambda x: x.len)
     return query
 
 
@@ -67,19 +36,73 @@ def retKGrams(query):
 
 # def queryProcessing(query):
 #     temp = query
+def stemmer(query):
+    """
+    Parameters
+    ---------
+    query: string
+        the word of which the stem word is to be found
 
+    Returns
+    ---------
+    ans : string
+        the stem word of the query
+    """
+    ps = PorterStemmer()
+    return ps.stem(query)
+def getPosting(word):
+    if word[0]=='*' or word[-1]=='*' or len(word.split('*'))==2:
+        temp=kGrams.wildCardSearch(word)
+        return getInvertedIndx(temp)
+    else:
+        word=findRightWord(word)
+        word=stemmer(word)
+        return invertedInd.getInvInd(word)
 
-def __main__():
-    print('hi')
-    # Process query terms and check for spelling mistakes
-    # Keep track of operations between the query terms
-    # Retrieve the Linked list for the query terms
-    # Merge the linked lists based on query operations
-    # Return the names of the docs with docId
-
-query = input("Search: ")
-if query[0]=='*' or query[-1]=='*' or len(query.split('*'))==2:
-    cursor = kGrams.wildCardSearch(query).head
+def getInvertedIndx(wordList):
+    cursor=wordList.head
+    arr=[]
     while cursor!=None:
-        print(cursor.data)
+        temp=stemmer(cursor.data)
+        arr.append(invertedInd.getInvInd(temp))
         cursor=cursor.next
+    ans=invIndxCombiner(arr)
+    return ans
+
+
+if __name__=="__main__":
+    query=input("Enter query: ")
+    query=query.lower()
+    obj = Conversion(len(query))
+    ansList=obj.infixToPostfix(query)
+    stack=[]
+    for x in ansList:
+        if x=="and":
+            temp=combineInvIndxAND(stack[-1],stack[-2])
+            del stack[-1]
+            del stack[-1]
+            stack.append(temp)
+        elif x=="or":
+            temp=combineInvIndxOR(stack[-1],stack[-2])
+            del stack[-1]
+            del stack[-1]
+            stack.append(temp)
+        elif x=="not":
+            temp=combineInvIndxNOT(stack[-1],42)
+            del stack[-1]
+            stack.append(temp)
+        else:
+            x=getPosting(x)
+            stack.append(x)
+    ans=stack[0]
+    cursor=ans.head
+    docs = {}
+    if ans.len!=0:
+        print("FOUND ", ans.len, " DOCUMENTS SATISFYING USER QUERY")
+        with open('lists/names.json') as jsonFile:
+            docs = json.load(jsonFile)
+        while cursor!= None:
+            print(docs[str(cursor.data)])
+            cursor = cursor.next
+    else: 
+        print("NO DOCUMENTS SATISFYING USER QUERY WERE FOUND")
