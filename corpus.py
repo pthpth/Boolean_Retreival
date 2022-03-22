@@ -1,7 +1,6 @@
 import json
 from helper import binarySearch
 import os
-import re
 from invertedIndx import StopWords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import RegexpTokenizer
@@ -11,6 +10,9 @@ class Corpus:
     def __init__(self):
         self.stopWords = []
         self.uniqueWords = []
+        self.k_grams={}
+        with open('lists/kgrams.json') as jsonFile:
+            self.k_grams = json.load(jsonFile)
         with open('lists/inverted-index.json') as jsonFile:
             self.data = json.load(jsonFile)
         file = open("lists/unique_words.txt")
@@ -41,13 +43,26 @@ class Corpus:
             json.dump(self.data, outfile)
         with open("lists/unique_words.txt", "w") as f:
             for x in self.uniqueWords:
-                print(x)
                 f.write(x + "\n")
+        with open("lists/kgrams.json", "w") as outfile:
+            json.dump(self.k_grams, outfile)
 
     def addUniqueWord(self, word):
         if binarySearch(self.uniqueWords, word) == -1:
             self.uniqueWords.append(word)
         self.uniqueWords.sort()
+        temp="$"+word+"$"
+        for i in range(len(temp)-2):
+            kGram = temp[i:i + 3]
+            if kGram in self.k_grams:
+                if binarySearch(self.k_grams[kGram],temp[1:-2])==-1:
+                    self.k_grams[kGram].append(temp[1:-2])
+                    self.k_grams[kGram].sort()
+            else:
+                self.k_grams[kGram] = [temp[1:-2]]
+        
+
+
 
     def isStopWord(self, word):
         return binarySearch(self.stopWords, word) != -1

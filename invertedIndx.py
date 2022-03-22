@@ -6,7 +6,7 @@ from helper import binarySearch
 class InvertedIndex:
     def __init__(self):
         self.invInd = {}
-        with open('inverted-index.json') as jsonFile:
+        with open('lists/inverted-index.json') as jsonFile:
             data = json.load(jsonFile)
         for x in data:
             temp = LinkedList()
@@ -21,7 +21,7 @@ class InvertedIndex:
 class KGrams:
     def __init__(self):
         self.kGrams = {}
-        with open('kgrams.json') as jsonFile:
+        with open('lists/kgrams.json') as jsonFile:
             data = json.load(jsonFile)
         for x in data:
             temp = LinkedList()
