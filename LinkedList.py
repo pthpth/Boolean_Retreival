@@ -11,8 +11,8 @@ class Node:
     nextN : Node
         Reference to the next node in the list
     """
-    def __init__(self, data, nextN=None):
-        self.next = nextN
+    def __init__(self, data):
+        self.next = None
         self.data = data
 
 
@@ -23,10 +23,12 @@ class LinkedList:
         self.cursor = None
 
     def insert(self, data):
-        self.len = self.len + 1
-        if self.head is None:
-            self.head = Node(data)
+        self.len += 1
+        newNode = Node(data)
+        if(self.head):
             self.cursor = self.head
+            while(self.cursor.next):
+                self.cursor = self.cursor.next
+            self.cursor.next = newNode
         else:
-            self.cursor.next = Node(data)
-            self.cursor = self.cursor.next
+            self.head = newNode

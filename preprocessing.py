@@ -62,5 +62,3 @@ def booleanRet(query):
     ans = LinkedList()
     for x in tokens:
         temp = findRightWord(x)
-
-print(findRightWord("california"))

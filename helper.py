@@ -47,7 +47,7 @@ def combineInvIndxAND(arr1, arr2):
     ans = LinkedList()
     cursor1 = arr1.head
     cursor2 = arr2.head
-    while cursor1 is not None and cursor2 is not None:
+    while cursor1!=None and cursor2!=None:
         if cursor1.data == cursor2.data:
             ans.insert(cursor1.data)
             cursor1 = cursor1.next
@@ -75,15 +75,15 @@ def combineInvIndxOR(arr1, arr2):
     ans = LinkedList()
     cursor1 = arr1.head
     cursor2 = arr2.head
-    while arr1 is not None and arr2 is not None:
-        if cursor1.data > cursor2.data:
-            ans.insert(cursor2.data)
-            cursor2 = cursor2.next
-        elif cursor1.data < cursor2.data:
+    while cursor1!=None and cursor2!=None:
+        if cursor1.data == cursor2.data:
             ans.insert(cursor1.data)
             cursor1 = cursor1.next
+            cursor2 = cursor2.next
+        elif cursor1.data > cursor2.data:
+            ans.insert(cursor2.data)
+            cursor2 = cursor2.next
         else:
             ans.insert(cursor1.data)
-            arr1 = cursor1.next
-            arr2 = cursor2.next
+            cursor1 = cursor1.next
     return ans

@@ -1,8 +1,10 @@
 import json
+import re
 from helper import binarySearch
 
 from invertedIndx import InvertedIndex, StopWords, KGrams
 from LinkedList import LinkedList
+from helper import combineInvIndxAND
 
 invertedInd = InvertedIndex()
 stopWords = StopWords()
@@ -63,10 +65,21 @@ def retKGrams(query):
     ansList = invIndxCombiner(ansList)
 
 
+# def queryProcessing(query):
+#     temp = query
+
+
 def __main__():
-    query = input("Search:")
+    print('hi')
     # Process query terms and check for spelling mistakes
     # Keep track of operations between the query terms
     # Retrieve the Linked list for the query terms
     # Merge the linked lists based on query operations
     # Return the names of the docs with docId
+
+query = input("Search: ")
+if query[0]=='*' or query[-1]=='*' or len(query.split('*'))==2:
+    cursor = kGrams.wildCardSearch(query).head
+    while cursor!=None:
+        print(cursor.data)
+        cursor=cursor.next
