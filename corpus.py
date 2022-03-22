@@ -1,8 +1,10 @@
 import json
 from helper import binarySearch
 import os
+import re
 from invertedIndx import StopWords
 from nltk.stem import PorterStemmer
+from nltk.tokenize import RegexpTokenizer
 
 
 class Corpus:
@@ -18,7 +20,7 @@ class Corpus:
         file = open("lists/stop_words.txt")
         for x in file:
             self.stopWords.append(x.strip())
-
+        self.stopWords.sort()
     def stemmer(self, query):
         """
         Parameters
@@ -39,6 +41,7 @@ class Corpus:
             json.dump(self.data, outfile)
         with open("lists/unique_words.txt", "w") as f:
             for x in self.uniqueWords:
+                print(x)
                 f.write(x + "\n")
 
     def addUniqueWord(self, word):
@@ -62,7 +65,7 @@ class Corpus:
         """
         # loading data
         if word in self.data:
-            if binarySearch(self.data, word) == -1:
+            if binarySearch(self.data[word], docID) == -1:
                 self.data[word].append(docID)
             self.data[word].sort()
         else:
@@ -74,18 +77,17 @@ if __name__ == "__main__":
     stop = StopWords()
     print(cp.stopWords)
     print(binarySearch(cp.stopWords, "is"))
+    t = RegexpTokenizer(r'\w+')
     for p in range(42):
+        print(p)
         file = open(f"data/{str(p)}.txt")
         lines = file.readlines()
-        words = [x.split() for x in lines]
-        words = [x.lower() for y in words for x in y]
-        words = [x for x in words if cp.isStopWord(x) is False]
         for x in lines:
-            z = x.split()
+            z = t.tokenize(x)
             for y in z:
                 y = y.lower()
                 if cp.isStopWord(y) is False:
                     cp.addUniqueWord(y)
                     y = cp.stemmer(y)
                     cp.addWord(y, p)
-        cp.close()
+    cp.close()
