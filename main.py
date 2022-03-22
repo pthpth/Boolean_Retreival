@@ -9,67 +9,6 @@ stopWords = StopWords()
 kGrams = KGrams()
 
 
-
-
-
-def combineInvIndxAND(arr1, arr2):
-    """
-    Function to combine the 2 inverted index list with AND operator
-
-    Paramters
-    ----------
-    arr1: LinkedList
-    arr2: LinkedList
-    Returns
-    --------
-    ans : LinkedList
-        The resulting inverted index list
-    """
-    ans = LinkedList()
-    arr1.cursor = arr1.head
-    arr2.cursor = arr2.head
-    while arr1.cursor is not None and arr2.cursor is not None:
-        if arr1.cursor.data == arr2.cursor.data:
-            ans.insert(arr1.cursor.data)
-            arr1 = arr1.cursor.next
-            arr2 = arr2.cursor.next
-        elif arr1.cursor.data > arr2.cursor.data:
-            arr2 = arr2.cursor.next
-        else:
-            arr1 = arr1.cursor.next
-    return ans
-
-
-def combineInvIndxOR(arr1, arr2):
-    """
-        Function to combine the 2 inverted index list with OR operator
-
-        Parameters
-        ----------
-        arr1: LinkedList
-        arr2: LinkedList
-        Returns
-        --------
-        ans : LinkedList
-            The resulting inverted index list
-        """
-    ans = LinkedList()
-    arr1.cursor = arr1.head
-    arr2.cursor = arr2.head
-    while arr1 is not None and arr2 is not None:
-        if arr1.cursor.data > arr2.cursor.data:
-            ans.insert(arr2.cursor.data)
-            arr2.cursor = arr2.cursor.next
-        elif arr1.cursor.data < arr2.cursor.data:
-            ans.insert(arr1.cursor.data)
-            arr1.cursor = arr1.cursor.next
-        else:
-            ans.insert(arr1.cursor.data)
-            arr1 = arr1.cursor.next
-            arr2 = arr2.cursor.next
-    return ans
-
-
 def combineInvIndxNOT(arr1, arr2):
     """
         Function to combine the 2 inverted index list with NOT operator
