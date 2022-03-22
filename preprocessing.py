@@ -51,7 +51,7 @@ def findRightWord(word):
         for wd in uniquewords.uniqueWords:
             if abs(len(wd) - len(word)) > min:
                 continue
-            else:
+            elif editDistance(wd,word)<min:
                 min = editDistance(wd, word)
                 w = wd
         return w
@@ -62,3 +62,5 @@ def booleanRet(query):
     ans = LinkedList()
     for x in tokens:
         temp = findRightWord(x)
+
+print(findRightWord("california"))

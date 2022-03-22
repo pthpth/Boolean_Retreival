@@ -1,3 +1,8 @@
+import imp
+
+
+from LinkedList import LinkedList
+
 def binarySearch(arr, query):
     """
     Implementation of binary search to find the query
@@ -26,5 +31,59 @@ def binarySearch(arr, query):
                 high = mid - 1
     return -1
 
+def combineInvIndxAND(arr1, arr2):
+    """
+    Function to combine the 2 inverted index list with AND operator
 
-print(binarySearch([1, 2, 3, 4, 5, 6, 7], 7))
+    Paramters
+    ----------
+    arr1: LinkedList
+    arr2: LinkedList
+    Returns
+    --------
+    ans : LinkedList
+        The resulting inverted index list
+    """
+    ans = LinkedList()
+    cursor1 = arr1.head
+    cursor2 = arr2.head
+    while cursor1 is not None and cursor2 is not None:
+        if cursor1.data == cursor2.data:
+            ans.insert(cursor1.data)
+            cursor1 = cursor1.next
+            cursor2 = cursor2.next
+        elif cursor1.data > cursor2.data:
+            cursor2 = cursor2.next
+        else:
+            cursor1 = cursor1.next
+    return ans
+
+
+def combineInvIndxOR(arr1, arr2):
+    """
+        Function to combine the 2 inverted index list with OR operator
+
+        Parameters
+        ----------
+        arr1: LinkedList
+        arr2: LinkedList
+        Returns
+        --------
+        ans : LinkedList
+            The resulting inverted index list
+        """
+    ans = LinkedList()
+    cursor1 = arr1.head
+    cursor2 = arr2.head
+    while arr1 is not None and arr2 is not None:
+        if cursor1.data > cursor2.data:
+            ans.insert(cursor2.data)
+            cursor2 = cursor2.next
+        elif cursor1.data < cursor2.data:
+            ans.insert(cursor1.data)
+            cursor1 = cursor1.next
+        else:
+            ans.insert(cursor1.data)
+            arr1 = cursor1.next
+            arr2 = cursor2.next
+    return ans

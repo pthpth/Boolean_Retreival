@@ -55,11 +55,11 @@ class Corpus:
         for i in range(len(temp)-2):
             kGram = temp[i:i + 3]
             if kGram in self.k_grams:
-                if binarySearch(self.k_grams[kGram],temp[1:-2])==-1:
-                    self.k_grams[kGram].append(temp[1:-2])
+                if binarySearch(self.k_grams[kGram],word)==-1:
+                    self.k_grams[kGram].append(word)
                     self.k_grams[kGram].sort()
             else:
-                self.k_grams[kGram] = [temp[1:-2]]
+                self.k_grams[kGram] = [word]
         
 
 

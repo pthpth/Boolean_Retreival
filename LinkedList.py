@@ -29,3 +29,4 @@ class LinkedList:
             self.cursor = self.head
         else:
             self.cursor.next = Node(data)
+            self.cursor = self.cursor.next
