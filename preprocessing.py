@@ -1,9 +1,5 @@
 import numpy as np
 
-from nltk.tokenize import word_tokenize
-from LinkedList import LinkedList
-import json
-from helper import binarySearch
 from invertedIndx import UniqueWords
 
 uniquewords = UniqueWords()
@@ -130,7 +126,3 @@ class Conversion:
  
         return self.output
  
- 
-
-def booleanRet(query):
-    word=query.split()

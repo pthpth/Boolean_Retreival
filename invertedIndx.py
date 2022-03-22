@@ -1,10 +1,6 @@
 import json
 import sys
-from sqlite3 import Cursor
-from tkinter.messagebox import NO
-from webbrowser import get
 
-from numpy import cumprod
 from LinkedList import LinkedList
 from helper import binarySearch, combineInvIndxAND
 

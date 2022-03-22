@@ -1,6 +1,5 @@
 import json
 from helper import binarySearch
-import os
 from invertedIndx import StopWords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import RegexpTokenizer
@@ -23,6 +22,8 @@ class Corpus:
         for x in file:
             self.stopWords.append(x.strip())
         self.stopWords.sort()
+
+
     def stemmer(self, query):
         """
         Parameters
@@ -61,9 +62,6 @@ class Corpus:
             else:
                 self.k_grams[kGram] = [word]
         
-
-
-
     def isStopWord(self, word):
         return binarySearch(self.stopWords, word) != -1
 

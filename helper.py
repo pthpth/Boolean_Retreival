@@ -27,6 +27,8 @@ def binarySearch(arr, query):
             else:
                 high = mid - 1
     return -1
+
+    
 def combineInvIndxNOT(arr1,maxInd):
     ans=LinkedList()
     cursor1=arr1.head

@@ -2,9 +2,9 @@ import json
 from helper import combineInvIndxNOT, combineInvIndxOR
 from nltk.stem import PorterStemmer
 from invertedIndx import InvertedIndex, StopWords, KGrams
-from LinkedList import LinkedList
 from helper import combineInvIndxAND
 from preprocessing import Conversion,findRightWord
+
 invertedInd = InvertedIndex()
 stopWords = StopWords()
 kGrams = KGrams()
@@ -24,18 +24,6 @@ def invIndxSort(query):
     return query
 
 
-def retKGrams(query):
-    ans = LinkedList()
-    ansList = []  # loading data
-    word = "$" + query + "$"
-    for i in range(len(query)):
-        kGram = query[i:i + 3]
-        ansList.append(kGrams[kGram])
-    ansList = invIndxCombiner(ansList)
-
-
-# def queryProcessing(query):
-#     temp = query
 def stemmer(query):
     """
     Parameters
@@ -50,6 +38,7 @@ def stemmer(query):
     """
     ps = PorterStemmer()
     return ps.stem(query)
+
 def getPosting(word):
     if word[0]=='*' or word[-1]=='*' or len(word.split('*'))==2:
         temp=kGrams.wildCardSearch(word)
