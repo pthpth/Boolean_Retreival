@@ -60,14 +60,13 @@ class Corpus:
         docID : int
             the index of the document
         """
-        with open('lists/inverted-index.json') as jsonFile:
-            data = json.load(jsonFile)  # loading data
+        # loading data
         if word in self.data:
             if binarySearch(self.data, word) == -1:
-                data[word].append(docID)
-            data[word].sort()
+                self.data[word].append(docID)
+            self.data[word].sort()
         else:
-            data[word] = [docID]
+            self.data[word] = [docID]
 
 
 if __name__ == "__main__":
