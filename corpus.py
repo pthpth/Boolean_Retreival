@@ -6,7 +6,23 @@ from nltk.tokenize import RegexpTokenizer
 
 
 class Corpus:
+    """
+    Class to go through all documents and make the list of unique words, kgrams, and stop words 
+
+    """
     def __init__(self):
+        """
+        Function to load the lists incase a new document has to be added.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        None
+
+        """
         self.stopWords = []
         self.uniqueWords = []
         self.k_grams={}
@@ -40,6 +56,18 @@ class Corpus:
         return ps.stem(query)
 
     def close(self):
+        """
+        Function to 'dump' the list of unique words, inverted index, kgrams into their respective files
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        None
+
+        """
         with open("lists/inverted-index.json", "w") as outfile:
             json.dump(self.data, outfile)
         with open("lists/unique_words.txt", "w") as f:
@@ -49,6 +77,19 @@ class Corpus:
             json.dump(self.k_grams, outfile)
 
     def addUniqueWord(self, word):
+        """
+        Function to check if word is unique and add it to the list of unique words and 
+        create kgrams if it is unique
+
+        Parameters
+        ----------
+        word: string
+            the word which we want to check if it is unique or not
+        Returns
+        ----------
+        None
+
+        """
         if binarySearch(self.uniqueWords, word) == -1:
             self.uniqueWords.append(word)
         self.uniqueWords.sort()
@@ -63,6 +104,18 @@ class Corpus:
                 self.k_grams[kGram] = [word]
         
     def isStopWord(self, word):
+        """
+        Function to check if word is stopword or not
+
+        Parameters
+        ----------
+        word: string
+            the word we want to check
+        Returns
+        ----------
+        bool
+            if word is stop word or not
+        """
         return binarySearch(self.stopWords, word) != -1
 
     def addWord(self, word, docID):

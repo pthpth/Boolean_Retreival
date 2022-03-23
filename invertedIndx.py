@@ -7,7 +7,23 @@ from helper import binarySearch, combineInvIndxAND
 sys.tracebacklimit = -1
 
 class InvertedIndex:
+    """
+        This class loads the inverted index from the json file and lets you access the posting list of 
+        any given word
+        """
     def __init__(self):
+        """
+        Function to load the inverted index
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        None
+
+        """
         self.invInd = {}
         with open('lists/inverted-index.json') as jsonFile:
             data = json.load(jsonFile)
@@ -18,11 +34,40 @@ class InvertedIndex:
                 temp.insert(y)
 
     def getInvInd(self, word):
+        """
+        Function to get posting list of any word
+
+        Parameters
+        ----------
+        word: string
+            word whose posting list we want
+        Returns
+        ----------
+        invInd: LinkedList
+            posting list of given word
+        """
         return self.invInd[word]
 
 
 class KGrams:
+    """
+    Class to load Kgrams from file and to return Kgrams and perform wildcard searches
+
+    
+    """
     def __init__(self):
+        """
+        Function to load kgrams into a dictionary
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        None
+
+        """
         self.kGrams = {}
         with open('lists/kgrams.json') as jsonFile:
             data = json.load(jsonFile)
@@ -33,6 +78,18 @@ class KGrams:
             self.kGrams[x] = temp
 
     def getKGrams(self, word):
+        """
+        Function to return kgrams of given word
+
+        Parameters
+        ----------
+        word: string
+            the word whose kgrams we want
+        Returns
+        ----------
+        kGrams: LinkedList
+            the kGrams of given word
+        """
         try: 
             return self.kGrams[word]
         except:
@@ -41,6 +98,18 @@ class KGrams:
            
 
     def wildCardSearch(self,word):
+        """
+        Function to perform wildcard searches
+
+        Parameters
+        ----------
+        word: string
+            the word on which we want to perform wildcard searches
+        Returns
+        ----------
+        ansList: LinkedList
+            List of all possible words for the given wildcard search
+        """
         ansList = LinkedList()
         if word[0]=='*':
             word = word[1:] + '$'
@@ -83,18 +152,60 @@ class KGrams:
 
  
 class StopWords:
+    """
+    Class to load stopwords and check if given word is a stop word
+
+    """
     def __init__(self):
+        """
+        Function to load stopwords
+
+        Parameters
+        ----------
+        None
+        Returns
+        ----------
+        None
+        """
         self.stopWord = []
         file = open("lists/stop_words.txt")
         for x in file:
             self.stopWord.append(x.strip())
 
     def ifStopWord(self, word):
+        """
+        Function to check if given word is stopword or not
+
+        Parameters
+        ----------
+        word: string
+            the word we want to check
+        Returns
+        ----------
+        bool
+            if word is stop word or not
+        """
         return binarySearch(self.stopWord, word) != -1
 
 
 class UniqueWords:
+    """
+    Class to load all unique words and check if given word is unique or not
+
+    """
     def __init__(self):
+        """
+        Function to load all unique words from file
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        None
+
+        """
         self.uniqueWords = []
         file = open("lists/unique_words.txt")
         for x in file:
@@ -102,4 +213,16 @@ class UniqueWords:
         self.uniqueWords.sort()
 
     def isUniqueWord(self, word):
+        """
+        Function to check if given word is unique or not
+
+        Parameters
+        ----------
+        word: string
+            the word we want to check
+        Returns
+        ----------
+        bool
+            the result of the search
+        """
         return binarySearch(self.uniqueWords, word) != -1
