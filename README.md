@@ -1,5 +1,7 @@
 # Boolean Information Retrieval System
 
+## To install dependencies :
+``$ pip install -r requirements.txt``
 ## To perform boolean querying :
 ``$ python main.py``
 
