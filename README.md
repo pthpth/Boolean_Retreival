@@ -54,6 +54,39 @@ Troilus and Cressida
 Hamlet
 Henry IV, Part 2
 -------------------------------------------------------------------------------
+Enter query: housi and (villaze or angello) 
+Did you mean House ?
+Did you mean Village ?
+Did you mean Angelo ?
+FOUND  12  DOCUMENTS SATISFYING USER QUERY
+Henry VIII
+Henry V
+Julius Caesar
+King Lear
+Measure for Measure
+Othello
+Richard III
+Richard II
+The Comedy of Errors
+The Two Noble Kinsmen
+As You Like It
+Henry IV, Part I
+-------------------------------------------------------------------------------
+Enter query: Pil*ge And (waesT Or Miscarry )  
+Did you mean Waist ?
+FOUND  9  DOCUMENTS SATISFYING USER QUERY
+Henry VI, Part 1
+Henry VI, Part 2
+Henry V
+King Lear
+Lucrece
+Measure for Measure
+Othello
+Romeo and Juliet
+The Merchant of Venice
+-------------------------------------------------------------------------------
+Enter query: KeyboardInterrupt
+PS F:\Y_II_SEM_II\Info Retrieval\Project\Boolean_Retreival> 
 ```
 ## Documentation:
 - Made using pdocs3
