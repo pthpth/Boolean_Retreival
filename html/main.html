@@ -27,32 +27,53 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import json
-
+from helper import combineInvIndxNOT, combineInvIndxOR
 from nltk.stem import PorterStemmer
+from invertedIndx import InvertedIndex, StopWords, KGrams
+from helper import combineInvIndxAND
+from preprocessing import Conversion,findRightWord
 
-from LinkedList import LinkedList
+invertedInd = InvertedIndex()
+stopWords = StopWords()
+kGrams = KGrams()
 
-
-def addWord(word, docID):
+def invIndxCombiner(ansList):
     &#34;&#34;&#34;
-    Function to take a word and docID and add it to the existing inverted index list in inverted-index.json
-
+    Combines the list of linked lists to a single list
     Parameters
-    ----------
-    word : string
-        the word to be added
-    docID : int
-        the index of the document
+    ---------
+    ansList: List
+        List of Linked Lists to be combined
+
+    Returns
+    ---------
+    ansList[0]: LinkedList 
+        Single LinkedList of all linked lists combined
     &#34;&#34;&#34;
-    with open(&#39;inverted-index.json&#39;) as jsonFile:
-        data = json.load(jsonFile)  # loading data
-    if word in data:
-        data[word].append(docID)
-        data[word].sort()
-    else:
-        data[word] = [docID]
-    with open(&#34;inverted-index.json&#34;, &#34;w&#34;) as outfile:
-        json.dump(data, outfile)
+    while len(ansList) &gt; 1:
+        ansList = invIndxSort(ansList)
+        ans = combineInvIndxOR(ansList[0], ansList[1])
+        del ansList[0]
+        del ansList[0]
+        ansList.append(ans)
+    return ansList[0]
+
+
+def invIndxSort(query):
+    &#34;&#34;&#34;
+    Sorts linked list in increasing order of size. It optimises the combiner
+    Parameters
+    ---------
+    query: List
+        List of Linked Lists to be sorted
+
+    Returns
+    ---------
+    query: LinkedList 
+        LinkedList sorted in increasing order of length
+    &#34;&#34;&#34;
+    query=sorted(query,key=lambda x: x.len)
+    return query
 
 
 def stemmer(query):
@@ -64,169 +85,96 @@ def stemmer(query):
 
     Returns
     ---------
-    ans : string
+    ans: string
         the stem word of the query
     &#34;&#34;&#34;
     ps = PorterStemmer()
     return ps.stem(query)
 
-
-def binarySearch(arr, query):
+def getPosting(word):
     &#34;&#34;&#34;
-    Implementation of binary search to find the query
+    gets the posting list of the query term
     Parameters
-    ----------
-    arr : list
-        the list in which the query has to be found
-    query : string
-        the word which is to be found
+    ---------
+    word: String
+        Word of which we need posting list
+
     Returns
     ---------
-    index: index of query in arr
-            -1 if not found
+    invertedInd.getInvInd(word): LinkedList 
+        Posting list of the word
     &#34;&#34;&#34;
-    low = 0
-    high = len(arr) - 1
-    mid = 0
-    while high &gt; low:
-        mid = (high + low) / 2
-        if query == arr[mid]:
-            return mid
-        else:
-            if query &gt; arr[mid]:
-                low = mid + 1
-            else:
-                high = mid - 1
-        return -1
+    if word[0]==&#39;*&#39; or word[-1]==&#39;*&#39; or len(word.split(&#39;*&#39;))==2:
+        temp=kGrams.wildCardSearch(word)
+        return getInvertedIndx(temp)
+    else:
+        word=findRightWord(word)
+        word=stemmer(word)
+        return invertedInd.getInvInd(word)
 
-
-def removeStopWords(word):
+def getInvertedIndx(wordList):
     &#34;&#34;&#34;
+    Combines the list of linked lists of terms to a linked list of documents
     Parameters
-    ----------
-    word : string
-        the word to be tested for being a stop word
+    ---------
+    wordList: List
+        List of Linked Lists to be combined
+
     Returns
-    ----------
-    ans : boolean
-        if the word is a stop word or not
+    ---------
+    ans: LinkedList 
+        Linked list of documents to be returned
     &#34;&#34;&#34;
-    file = open(&#34;stop_words.txt&#34;)
-    arr = []
-    for x in file:
-        arr.append(x.strip())
-        if binarySearch(arr, word) == -1:
-            return False
-        else:
-            return True
-
-
-def combineInvIndxAND(arr1, arr2):
-    &#34;&#34;&#34;
-    Function to combine the 2 inverted index list with AND operator
-
-    Paramters
-    ----------
-    arr1: LinkedList
-    arr2: LinkedList
-    Returns
-    --------
-    ans : LinkedList
-        The resulting inverted index list
-    &#34;&#34;&#34;
-    ans = LinkedList()
-    while arr1 is not None and arr2 is not None:
-        if arr1.data == arr2.data:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-            arr2 = arr2.next
-        elif arr1.data &gt; arr2.data:
-            arr2 = arr2.next
-        else:
-            arr1 = arr1.next
+    cursor=wordList.head
+    arr=[]
+    while cursor!=None:
+        temp=stemmer(cursor.data)
+        arr.append(invertedInd.getInvInd(temp))
+        cursor=cursor.next
+    ans=invIndxCombiner(arr)
     return ans
 
 
-def combineInvIndxOR(arr1, arr2):
+if __name__==&#34;__main__&#34;:
     &#34;&#34;&#34;
-        Function to combine the 2 inverted index list with OR operator
-
-        Parameters
-        ----------
-        arr1: LinkedList
-        arr2: LinkedList
-        Returns
-        --------
-        ans : LinkedList
-            The resulting inverted index list
-        &#34;&#34;&#34;
-    ans = LinkedList()
-    while arr1 is not None and arr2 is not None:
-        if arr1.data &gt; arr2.data:
-            ans.insert(arr2.data)
-            arr2 = arr2.next
-        elif arr1.data &lt; arr2.data:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-        else:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-            arr2 = arr2.next
-    return ans
-
-
-def combineInvIndxNOT(arr1, arr2):
+    Main function with driver code
+    
     &#34;&#34;&#34;
-        Function to combine the 2 inverted index list with NOT operator
-
-        Parameters
-        ----------
-        arr1: LinkedList
-        arr2: LinkedList
-        Returns
-        --------
-        ans : LinkedList
-            The resulting inverted index list
-        &#34;&#34;&#34;
-    ans = LinkedList()
-    while arr1 is not None and arr2 is not None:
-        if arr1.data == arr2.data:
-            arr1 = arr1.next
-            arr2 = arr2.next
-        elif arr1.data &gt; arr2.data:
-            ans.insert(arr2.data)
-            arr2 = arr2.next
+    query=input(&#34;Enter query: &#34;)
+    query=query.lower()
+    obj = Conversion(len(query))
+    ansList=obj.infixToPostfix(query)
+    stack=[]
+    for x in ansList:
+        if x==&#34;and&#34;:
+            temp=combineInvIndxAND(stack[-1],stack[-2])
+            del stack[-1]
+            del stack[-1]
+            stack.append(temp)
+        elif x==&#34;or&#34;:
+            temp=combineInvIndxOR(stack[-1],stack[-2])
+            del stack[-1]
+            del stack[-1]
+            stack.append(temp)
+        elif x==&#34;not&#34;:
+            temp=combineInvIndxNOT(stack[-1],42)
+            del stack[-1]
+            stack.append(temp)
         else:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-    return ans
-
-
-def invIndxCombiner(ansList):
-    while len(ansList):
-        ansList = invIndxSort(ansList)
-        ans = combineInvIndxAND(ansList[0], ansList[1])
-        del ansList[0]
-        del ansList[1]
-        ansList.append(ans)
-    return ansList[0]
-
-
-def invIndxSort(query):
-    query.sort(lambda x: x.len)
-    return query
-
-
-def retKGrams(query):
-    ans = LinkedList()
-    ansList = []
-    with open(&#39;k-gram.json&#39;) as jsonFile:
-        kGramList = json.load(jsonFile)  # loading data
-    word = &#34;$&#34; + query + &#34;$&#34;
-    for i in range(len(query)):
-        kGram = query[i:i + 3]
-        ansList.append(kGramList[kGram])
-    ansList = invIndxCombiner(ansList)</code></pre>
+            x=getPosting(x)
+            stack.append(x)
+    ans=stack[0]
+    cursor=ans.head
+    docs = {}
+    if ans.len!=0:
+        print(&#34;FOUND &#34;, ans.len, &#34; DOCUMENTS SATISFYING USER QUERY&#34;)
+        with open(&#39;lists/names.json&#39;) as jsonFile:
+            docs = json.load(jsonFile)
+        while cursor!= None:
+            print(docs[str(cursor.data)])
+            cursor = cursor.next
+    else: 
+        print(&#34;NO DOCUMENTS SATISFYING USER QUERY WERE FOUND&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -236,251 +184,129 @@ def retKGrams(query):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="main.addWord"><code class="name flex">
-<span>def <span class="ident">addWord</span></span>(<span>word, docID)</span>
+<dt id="main.getInvertedIndx"><code class="name flex">
+<span>def <span class="ident">getInvertedIndx</span></span>(<span>wordList)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to take a word and docID and add it to the existing inverted index list in inverted-index.json</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>word</code></strong> :&ensp;<code>string</code></dt>
-<dd>the word to be added</dd>
-<dt><strong><code>docID</code></strong> :&ensp;<code>int</code></dt>
-<dd>the index of the document</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def addWord(word, docID):
-    &#34;&#34;&#34;
-    Function to take a word and docID and add it to the existing inverted index list in inverted-index.json
-
-    Parameters
-    ----------
-    word : string
-        the word to be added
-    docID : int
-        the index of the document
-    &#34;&#34;&#34;
-    with open(&#39;inverted-index.json&#39;) as jsonFile:
-        data = json.load(jsonFile)  # loading data
-    if word in data:
-        data[word].append(docID)
-        data[word].sort()
-    else:
-        data[word] = [docID]
-    with open(&#34;inverted-index.json&#34;, &#34;w&#34;) as outfile:
-        json.dump(data, outfile)</code></pre>
-</details>
-</dd>
-<dt id="main.binarySearch"><code class="name flex">
-<span>def <span class="ident">binarySearch</span></span>(<span>arr, query)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Implementation of binary search to find the query
+<div class="desc"><p>Combines the list of linked lists of terms to a linked list of documents
 Parameters</p>
 <hr>
 <dl>
-<dt><strong><code>arr</code></strong> :&ensp;<code>list</code></dt>
-<dd>the list in which the query has to be found</dd>
-<dt><strong><code>query</code></strong> :&ensp;<code>string</code></dt>
-<dd>the word which is to be found</dd>
+<dt><strong><code>wordList</code></strong> :&ensp;<code>List</code></dt>
+<dd>List of Linked Lists to be combined</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><strong><code>index</code></strong> :&ensp;<code>index</code> of <code>query in arr</code></dt>
-<dd>-1 if not found</dd>
+<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList </code></dt>
+<dd>Linked list of documents to be returned</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def binarySearch(arr, query):
+<pre><code class="python">def getInvertedIndx(wordList):
     &#34;&#34;&#34;
-    Implementation of binary search to find the query
+    Combines the list of linked lists of terms to a linked list of documents
     Parameters
-    ----------
-    arr : list
-        the list in which the query has to be found
-    query : string
-        the word which is to be found
+    ---------
+    wordList: List
+        List of Linked Lists to be combined
+
     Returns
     ---------
-    index: index of query in arr
-            -1 if not found
+    ans: LinkedList 
+        Linked list of documents to be returned
     &#34;&#34;&#34;
-    low = 0
-    high = len(arr) - 1
-    mid = 0
-    while high &gt; low:
-        mid = (high + low) / 2
-        if query == arr[mid]:
-            return mid
-        else:
-            if query &gt; arr[mid]:
-                low = mid + 1
-            else:
-                high = mid - 1
-        return -1</code></pre>
+    cursor=wordList.head
+    arr=[]
+    while cursor!=None:
+        temp=stemmer(cursor.data)
+        arr.append(invertedInd.getInvInd(temp))
+        cursor=cursor.next
+    ans=invIndxCombiner(arr)
+    return ans</code></pre>
 </details>
 </dd>
-<dt id="main.combineInvIndxAND"><code class="name flex">
-<span>def <span class="ident">combineInvIndxAND</span></span>(<span>arr1, arr2)</span>
+<dt id="main.getPosting"><code class="name flex">
+<span>def <span class="ident">getPosting</span></span>(<span>word)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to combine the 2 inverted index list with AND operator</p>
-<h2 id="paramters">Paramters</h2>
-<p>arr1: LinkedList
-arr2: LinkedList
-Returns</p>
+<div class="desc"><p>gets the posting list of the query term
+Parameters</p>
 <hr>
 <dl>
-<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>The resulting inverted index list</dd>
+<dt><strong><code>word</code></strong> :&ensp;<code>String</code></dt>
+<dd>Word of which we need posting list</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>invertedInd.getInvInd(word): LinkedList</code></dt>
+<dd>Posting list of the word</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def combineInvIndxAND(arr1, arr2):
+<pre><code class="python">def getPosting(word):
     &#34;&#34;&#34;
-    Function to combine the 2 inverted index list with AND operator
+    gets the posting list of the query term
+    Parameters
+    ---------
+    word: String
+        Word of which we need posting list
 
-    Paramters
-    ----------
-    arr1: LinkedList
-    arr2: LinkedList
     Returns
-    --------
-    ans : LinkedList
-        The resulting inverted index list
+    ---------
+    invertedInd.getInvInd(word): LinkedList 
+        Posting list of the word
     &#34;&#34;&#34;
-    ans = LinkedList()
-    while arr1 is not None and arr2 is not None:
-        if arr1.data == arr2.data:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-            arr2 = arr2.next
-        elif arr1.data &gt; arr2.data:
-            arr2 = arr2.next
-        else:
-            arr1 = arr1.next
-    return ans</code></pre>
-</details>
-</dd>
-<dt id="main.combineInvIndxNOT"><code class="name flex">
-<span>def <span class="ident">combineInvIndxNOT</span></span>(<span>arr1, arr2)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Function to combine the 2 inverted index list with NOT operator</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>arr1</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>&nbsp;</dd>
-<dt><strong><code>arr2</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>&nbsp;</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>The resulting inverted index list</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def combineInvIndxNOT(arr1, arr2):
-    &#34;&#34;&#34;
-        Function to combine the 2 inverted index list with NOT operator
-
-        Parameters
-        ----------
-        arr1: LinkedList
-        arr2: LinkedList
-        Returns
-        --------
-        ans : LinkedList
-            The resulting inverted index list
-        &#34;&#34;&#34;
-    ans = LinkedList()
-    while arr1 is not None and arr2 is not None:
-        if arr1.data == arr2.data:
-            arr1 = arr1.next
-            arr2 = arr2.next
-        elif arr1.data &gt; arr2.data:
-            ans.insert(arr2.data)
-            arr2 = arr2.next
-        else:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-    return ans</code></pre>
-</details>
-</dd>
-<dt id="main.combineInvIndxOR"><code class="name flex">
-<span>def <span class="ident">combineInvIndxOR</span></span>(<span>arr1, arr2)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Function to combine the 2 inverted index list with OR operator</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>arr1</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>&nbsp;</dd>
-<dt><strong><code>arr2</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>&nbsp;</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>ans</code></strong> :&ensp;<code>LinkedList</code></dt>
-<dd>The resulting inverted index list</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def combineInvIndxOR(arr1, arr2):
-    &#34;&#34;&#34;
-        Function to combine the 2 inverted index list with OR operator
-
-        Parameters
-        ----------
-        arr1: LinkedList
-        arr2: LinkedList
-        Returns
-        --------
-        ans : LinkedList
-            The resulting inverted index list
-        &#34;&#34;&#34;
-    ans = LinkedList()
-    while arr1 is not None and arr2 is not None:
-        if arr1.data &gt; arr2.data:
-            ans.insert(arr2.data)
-            arr2 = arr2.next
-        elif arr1.data &lt; arr2.data:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-        else:
-            ans.insert(arr1.data)
-            arr1 = arr1.next
-            arr2 = arr2.next
-    return ans</code></pre>
+    if word[0]==&#39;*&#39; or word[-1]==&#39;*&#39; or len(word.split(&#39;*&#39;))==2:
+        temp=kGrams.wildCardSearch(word)
+        return getInvertedIndx(temp)
+    else:
+        word=findRightWord(word)
+        word=stemmer(word)
+        return invertedInd.getInvInd(word)</code></pre>
 </details>
 </dd>
 <dt id="main.invIndxCombiner"><code class="name flex">
 <span>def <span class="ident">invIndxCombiner</span></span>(<span>ansList)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Combines the list of linked lists to a single list
+Parameters</p>
+<hr>
+<dl>
+<dt><strong><code>ansList</code></strong> :&ensp;<code>List</code></dt>
+<dd>List of Linked Lists to be combined</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>ansList[0]: LinkedList</code></dt>
+<dd>Single LinkedList of all linked lists combined</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def invIndxCombiner(ansList):
-    while len(ansList):
+    &#34;&#34;&#34;
+    Combines the list of linked lists to a single list
+    Parameters
+    ---------
+    ansList: List
+        List of Linked Lists to be combined
+
+    Returns
+    ---------
+    ansList[0]: LinkedList 
+        Single LinkedList of all linked lists combined
+    &#34;&#34;&#34;
+    while len(ansList) &gt; 1:
         ansList = invIndxSort(ansList)
-        ans = combineInvIndxAND(ansList[0], ansList[1])
+        ans = combineInvIndxOR(ansList[0], ansList[1])
         del ansList[0]
-        del ansList[1]
+        del ansList[0]
         ansList.append(ans)
     return ansList[0]</code></pre>
 </details>
@@ -489,74 +315,37 @@ Returns</p>
 <span>def <span class="ident">invIndxSort</span></span>(<span>query)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def invIndxSort(query):
-    query.sort(lambda x: x.len)
-    return query</code></pre>
-</details>
-</dd>
-<dt id="main.removeStopWords"><code class="name flex">
-<span>def <span class="ident">removeStopWords</span></span>(<span>word)</span>
-</code></dt>
-<dd>
-<div class="desc"><h2 id="parameters">Parameters</h2>
+<div class="desc"><p>Sorts linked list in increasing order of size. It optimises the combiner
+Parameters</p>
+<hr>
 <dl>
-<dt><strong><code>word</code></strong> :&ensp;<code>string</code></dt>
-<dd>the word to be tested for being a stop word</dd>
+<dt><strong><code>query</code></strong> :&ensp;<code>List</code></dt>
+<dd>List of Linked Lists to be sorted</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><strong><code>ans</code></strong> :&ensp;<code>boolean</code></dt>
-<dd>if the word is a stop word or not</dd>
+<dt><strong><code>query</code></strong> :&ensp;<code>LinkedList </code></dt>
+<dd>LinkedList sorted in increasing order of length</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def removeStopWords(word):
+<pre><code class="python">def invIndxSort(query):
     &#34;&#34;&#34;
+    Sorts linked list in increasing order of size. It optimises the combiner
     Parameters
-    ----------
-    word : string
-        the word to be tested for being a stop word
+    ---------
+    query: List
+        List of Linked Lists to be sorted
+
     Returns
-    ----------
-    ans : boolean
-        if the word is a stop word or not
+    ---------
+    query: LinkedList 
+        LinkedList sorted in increasing order of length
     &#34;&#34;&#34;
-    file = open(&#34;stop_words.txt&#34;)
-    arr = []
-    for x in file:
-        arr.append(x.strip())
-        if binarySearch(arr, word) == -1:
-            return False
-        else:
-            return True</code></pre>
-</details>
-</dd>
-<dt id="main.retKGrams"><code class="name flex">
-<span>def <span class="ident">retKGrams</span></span>(<span>query)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def retKGrams(query):
-    ans = LinkedList()
-    ansList = []
-    with open(&#39;k-gram.json&#39;) as jsonFile:
-        kGramList = json.load(jsonFile)  # loading data
-    word = &#34;$&#34; + query + &#34;$&#34;
-    for i in range(len(query)):
-        kGram = query[i:i + 3]
-        ansList.append(kGramList[kGram])
-    ansList = invIndxCombiner(ansList)</code></pre>
+    query=sorted(query,key=lambda x: x.len)
+    return query</code></pre>
 </details>
 </dd>
 <dt id="main.stemmer"><code class="name flex">
@@ -586,7 +375,7 @@ Returns</p>
 
     Returns
     ---------
-    ans : string
+    ans: string
         the stem word of the query
     &#34;&#34;&#34;
     ps = PorterStemmer()
@@ -605,16 +394,11 @@ Returns</p>
 </div>
 <ul id="index">
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="two-column">
-<li><code><a title="main.addWord" href="#main.addWord">addWord</a></code></li>
-<li><code><a title="main.binarySearch" href="#main.binarySearch">binarySearch</a></code></li>
-<li><code><a title="main.combineInvIndxAND" href="#main.combineInvIndxAND">combineInvIndxAND</a></code></li>
-<li><code><a title="main.combineInvIndxNOT" href="#main.combineInvIndxNOT">combineInvIndxNOT</a></code></li>
-<li><code><a title="main.combineInvIndxOR" href="#main.combineInvIndxOR">combineInvIndxOR</a></code></li>
+<ul class="">
+<li><code><a title="main.getInvertedIndx" href="#main.getInvertedIndx">getInvertedIndx</a></code></li>
+<li><code><a title="main.getPosting" href="#main.getPosting">getPosting</a></code></li>
 <li><code><a title="main.invIndxCombiner" href="#main.invIndxCombiner">invIndxCombiner</a></code></li>
 <li><code><a title="main.invIndxSort" href="#main.invIndxSort">invIndxSort</a></code></li>
-<li><code><a title="main.removeStopWords" href="#main.removeStopWords">removeStopWords</a></code></li>
-<li><code><a title="main.retKGrams" href="#main.retKGrams">retKGrams</a></code></li>
 <li><code><a title="main.stemmer" href="#main.stemmer">stemmer</a></code></li>
 </ul>
 </li>

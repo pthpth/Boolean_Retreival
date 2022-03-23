@@ -112,38 +112,41 @@ if __name__=="__main__":
     Main function with driver code
     
     """
-    query=input("Enter query: ")
-    query=query.lower()
-    obj = Conversion(len(query))
-    ansList=obj.infixToPostfix(query)
-    stack=[]
-    for x in ansList:
-        if x=="and":
-            temp=combineInvIndxAND(stack[-1],stack[-2])
-            del stack[-1]
-            del stack[-1]
-            stack.append(temp)
-        elif x=="or":
-            temp=combineInvIndxOR(stack[-1],stack[-2])
-            del stack[-1]
-            del stack[-1]
-            stack.append(temp)
-        elif x=="not":
-            temp=combineInvIndxNOT(stack[-1],42)
-            del stack[-1]
-            stack.append(temp)
-        else:
-            x=getPosting(x)
-            stack.append(x)
-    ans=stack[0]
-    cursor=ans.head
-    docs = {}
-    if ans.len!=0:
-        print("FOUND ", ans.len, " DOCUMENTS SATISFYING USER QUERY")
-        with open('lists/names.json') as jsonFile:
-            docs = json.load(jsonFile)
-        while cursor!= None:
-            print(docs[str(cursor.data)])
-            cursor = cursor.next
-    else: 
-        print("NO DOCUMENTS SATISFYING USER QUERY WERE FOUND")
+    while(True):
+        query=input("Enter query: ")
+        query=query.lower()
+        obj = Conversion(len(query))
+        ansList=obj.infixToPostfix(query)
+        stack=[]
+        for x in ansList:
+            if x=="and":
+                temp=combineInvIndxAND(stack[-1],stack[-2])
+                del stack[-1]
+                del stack[-1]
+                stack.append(temp)
+            elif x=="or":
+                temp=combineInvIndxOR(stack[-1],stack[-2])
+                del stack[-1]
+                del stack[-1]
+                stack.append(temp)
+            elif x=="not":
+                temp=combineInvIndxNOT(stack[-1],42)
+                del stack[-1]
+                stack.append(temp)
+            else:
+                x=getPosting(x)
+                stack.append(x)
+        ans=stack[0]
+        cursor=ans.head
+        docs = {}
+        if ans.len!=0:
+            print("FOUND ", ans.len, " DOCUMENTS SATISFYING USER QUERY")
+            with open('lists/names.json') as jsonFile:
+                docs = json.load(jsonFile)
+            while cursor!= None:
+                print(docs[str(cursor.data)])
+                cursor = cursor.next
+        else: 
+            print("NO DOCUMENTS SATISFYING USER QUERY WERE FOUND")
+        print("-------------------------------------------------------------------------------")
+        
