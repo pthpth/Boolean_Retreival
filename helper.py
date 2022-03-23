@@ -30,6 +30,21 @@ def binarySearch(arr, query):
 
     
 def combineInvIndxNOT(arr1,maxInd):
+    """
+    Function to find 'NOT' of a given posting list
+
+    Parameters
+    ----------
+    arr1: LinkedList
+        the posting list of which we want the 'NOT'
+
+    maxInd: int
+        the number of items in arr1
+    Returns
+    ----------
+    ans: LinkedList
+        the 'NOT' of the given list
+    """
     ans=LinkedList()
     cursor1=arr1.head
     i=0

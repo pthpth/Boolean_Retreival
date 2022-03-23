@@ -36,7 +36,7 @@ class LinkedList:
 
     def insert(self, data):
         """
-        function to insert node into linkedlist
+        function to insert node into linkedlist.
 
         Attributes
         ----------

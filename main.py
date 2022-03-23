@@ -19,7 +19,7 @@ def invIndxCombiner(ansList):
 
     Returns
     ---------
-    ansList[0] : LinkedList 
+    ansList[0]: LinkedList 
         Single LinkedList of all linked lists combined
     """
     while len(ansList) > 1:
@@ -41,7 +41,7 @@ def invIndxSort(query):
 
     Returns
     ---------
-    query : LinkedList 
+    query: LinkedList 
         LinkedList sorted in increasing order of length
     """
     query=sorted(query,key=lambda x: x.len)
@@ -57,7 +57,7 @@ def stemmer(query):
 
     Returns
     ---------
-    ans : string
+    ans: string
         the stem word of the query
     """
     ps = PorterStemmer()
@@ -73,7 +73,7 @@ def getPosting(word):
 
     Returns
     ---------
-    invertedInd.getInvInd(word) : LinkedList 
+    invertedInd.getInvInd(word): LinkedList 
         Posting list of the word
     """
     if word[0]=='*' or word[-1]=='*' or len(word.split('*'))==2:
@@ -94,7 +94,7 @@ def getInvertedIndx(wordList):
 
     Returns
     ---------
-    ans : LinkedList 
+    ans: LinkedList 
         Linked list of documents to be returned
     """
     cursor=wordList.head

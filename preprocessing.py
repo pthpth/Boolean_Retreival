@@ -17,7 +17,7 @@ def editDistance(str1, str2):
         string being compared with
     Returns
     ----------
-    ans : int
+    ans: int
         the edit distance between the two strings
     """
     # Converting str1 to str2
@@ -40,6 +40,21 @@ def editDistance(str1, str2):
 
 
 def findRightWord(word):
+    """
+    This function is for spelling check. If the word is not in the dictionary, it finds thee closest word using the 
+    levenshtein edit distance.
+
+    Parameters
+    ----------
+    word: string
+        word to run spelling check on
+    
+    Returns
+    ----------
+    w: string
+        the word closest to the given word in terms of edit distance. If there are multiple words with same edit distance,
+        it returns the first such word.
+    """
     min = 127
     if uniquewords.isUniqueWord(word):
         return word
@@ -54,6 +69,11 @@ def findRightWord(word):
         return w
 
 class Conversion:
+    """
+    This class converts the query with boolean operators such as 'AND', 'OR', etc into something we can work with.
+    Essentially we are converting the infix expression into postfix expression
+
+    """
     def __init__(self, capacity):
         self.top = -1
         self.capacity = capacity
@@ -68,6 +88,18 @@ class Conversion:
         return self.array[-1]
  
     def pop(self):
+        """
+        Function to remove the topmost element in list
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        ans: int
+            the edit distance between the two strings
+        """
         if not self.isEmpty():
             self.top -= 1
             return self.array.pop()
@@ -75,13 +107,50 @@ class Conversion:
             return "$"
  
     def push(self, op):
+        """
+        Function to push an element into a list
+
+        Parameters
+        ----------
+        op: char
+            the character to push into the list
+        Returns
+        ----------
+        None
+
+        """
         self.top += 1
         self.array.append(op)
  
     def isOperand(self, ch):
+        """
+        Function to check if the element is an operand or not
+
+        Parameters
+        ----------
+        ch: char
+            the character to check if it is operand or not
+        Returns
+        ----------
+        bool
+            whether the char was a operand or not
+        """
         return not(ch=="and" or ch=="or" or ch=="not" or ch=="(" or ch==")")
  
     def notGreater(self, i):
+        """
+        Function to check the order of preference of operators
+
+        Parameters
+        ----------
+        i: char
+            the operator which we will compare to the operator in the top of the list
+        Returns
+        ----------
+        bool
+            whether the precedence of current operator is less than or greater than the operator
+            in the top of the list.
+        """
         try:
             a = self.precedence[i]
             b = self.precedence[self.peek()]
@@ -90,6 +159,18 @@ class Conversion:
             return False
  
     def infixToPostfix(self, exp):
+        """
+        Function to convert infix expression to postfix expression
+
+        Parameters
+        ----------
+        exp: string
+            the expression we want to convert into postfix format
+        Returns
+        ----------
+        output: List
+            converted postfix expression
+        """
         temp=exp
         exp=""
         for j in range(len(temp)):
